@@ -112,17 +112,17 @@ int main (int argc, char* argv []) {
     uint n = stoi(argv[1]);
     bool prompt = argc == 3;
     switch (argv[2][0]) {
-    case 'c':
-	test(HashChain<Point, string>(n), prompt);
-	break;
-    case 'l':
-	test(HashOpen<Point, string, LinProb<Point>>(n), prompt);
-	break;
-    case 'q':
-	test(HashOpen<Point, string, QuadProb<Point>>(n), prompt);
-	break;
-    case 'd':
-	test(HashOpen<Point, string, DblHash<Point>>(n), prompt);
-	break;
+        case 'c':
+        test(HashChain<Point, string>(n), prompt);
+        break;
+            /*case 'l':
+            test(HashOpen<Point, string, LinProb<Point>>(n), prompt);
+            break;
+            case 'q':
+            test(HashOpen<Point, string, QuadProb<Point>>(n), prompt);
+            break;
+            case 'd':
+            test(HashOpen<Point, string, DblHash<Point>>(n), prompt);
+            break;*/
     }
 }
