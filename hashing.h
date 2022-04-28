@@ -90,25 +90,30 @@ struct HashChain {
     bool remove(K k) {
         //hashwert berechnen
         uint hkey = hashval(k);
-        int c = 0;
         //checken ob ein Wert an diesem hashwert existiert
-        int size = sizeof(table[hkey]) / sizeof(table[hkey][0]);
         if (table[hkey] != NULL) {
-            //checken ob der key in der Liste existiert
-            //wenn ja, dann den Wert in v speichern und true zurückgeben
-            for (int i = 0; i < size; i++) {
-                if (table[hkey][i].key == k) {
-                    //delete table[hkey][i];
-                    VK newarr[] = new VK[size - 1];
-                    for (int j = 0; j < size; j++) {
-                        if (j != i) {
-                            newarr[c] = table[hkey][j];
-                            c++;
+            //pointer auf erstes tupel Speichern
+            VK* vk = table[hkey];
+            //solange nicht das Ende der Liste erreicht wurde Iterieren wir durch die Liste
+            while (vk != NULL) {
+                //wenn key gefunden, dann tupel löschen
+                if (vk->key == k) {
+                    //wenn erster Eintrag, dann nur den Pointer auf den nächsten Eintrag übernehmen
+                    if (vk == table[hkey]) {
+                        table[hkey] = vk->next;
+                    } else {
+                        //sonst den Pointer auf den nächsten Eintrag übernehmen
+                        VK* vk2 = table[hkey];
+                        while (vk2->next != vk) {
+                            vk2 = vk2->next;
                         }
+                        vk2->next = vk->next;
                     }
-                    table[hkey] = newarr;
+                    //löschen
+                    delete vk;
                     return true;
                 }
+                vk = vk->next;
             }
         }
         //wenn nicht, dann false zurückgeben
@@ -128,7 +133,13 @@ struct HashChain {
             //checken, ob ein Wert an diesem hashwert existiert
             if (table[i] != NULL) {
                 //wenn ja, dann den Wert ausgeben
-                cout << i << " " << table[i][0] << endl;
+                VK *vk = table[i];
+                int c = 0;
+                while (vk != NULL) {
+                    cout << c << " " << vk->key << " " << vk->value << endl;
+                    c++;
+                    vk = vk->next;
+                }
             }
         }
     };
