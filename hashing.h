@@ -55,14 +55,37 @@ struct HashChain {
     // falls vorhanden; der Resultatwert ist in diesem Fall true.
     // Andernfalls bleibt v unverändert, und der Resultatwert ist false.
     bool get (K k, V& v){
-        return false;
+        //hashwert berechnen
+        uint hkey = hashval(k);
+        //checken ob ein Wert an diesem hashwert existiert
+        if (table[hkey] == NULL){
+            //wenn nicht, return false
+            return false;
+        }
+        else{
+            //wenn ja, dann den Wert in v speichern und true zurückgeben
+            v = table[hkey][0];
+            return true;
+        }
     }
 
     // Eintrag mit Schlüssel k entfernen, falls vorhanden;
     // der Resultatwert ist in diesem Fall true.
     // Andernfalls wirkungslos, und der Resultatwert ist false.
     bool remove (K k){
-        return false;
+        //hashwert berechnen
+        uint hkey = hashval(k);
+        //checken ob ein Wert an diesem hashwert existiert
+        if (table[hkey] == NULL){
+            //wenn nicht, return false
+            return false;
+        }
+        else{
+            //wenn ja, dann den Wert entfernen und true zurückgeben
+            delete[] table[hkey];
+            table[hkey] = NULL;
+            return true;
+        }
     }
 
     // Inhalt der Tabelle zu Testzwecken ausgeben:
@@ -73,8 +96,14 @@ struct HashChain {
     // Bei Verwendung von dump muss es passende Ausgabeoperatoren (<<)
     // für die Typen K und V geben.
     void dump (){
-
-    }
+        //iterieren über die Tabelle
+        for(int i = 0; i < size; i++){
+            //checken, ob ein Wert an diesem hashwert existiert
+            if (table[i] != NULL){
+                //wenn ja, dann den Wert ausgeben
+                cout << i << " " << table[i][0] << endl;
+            }
+        }
 };
 
 // Sondierungssequenz mit Schlüsseltyp K für lineare Sondierung.
