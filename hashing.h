@@ -9,44 +9,52 @@ using uint = unsigned int;
 // Typ K bekannt sein.
 template <typename K, typename V>
 struct HashChain {
+    //Hilfsstruktur für die Datenspeicherung und Verkettung
+    struct VK {
+        K key;
+        V value;
+        VK* next;
+        VK(K k, V v,VK* n) : key(k), value(v), next(n) {}
+    };
     uint size;
     //hier pointer, da der Werttyp V unbekannt ist.
-    V** table;
+    VK **table;
+
     // Initialisierung mit Größe n.
-    HashChain (uint n){
+    HashChain(uint n) {
         // Größe der Tabelle n.
         size = n;
         // Tabelle mit n (= size) Pointern.
-        table = new V* [size]();
+        table = new VK *[size]();
     }
 
     // Eintrag mit Schlüssel k und Wert v (am Anfang der jeweiligen
     // Liste) hinzufügen (wenn es noch keinen solchen Eintrag gibt)
     // bzw. ersetzen (wenn es bereits einen gibt).
     // Der Resultatwert ist immer true.
-    bool put (K k, V v){ ///TODO: TESTING
+    bool put(K k, V v) { ///TODO: TESTING
         //hashwert berechnen
         uint hkey = hashval(k);
         //gibt es schon eine Liste an diesem hashwert?
-        if(table[hkey] == NULL){ //nein
+        if (table[hkey] == NULL) { //nein
             //neue Liste anlegen
-            table[hkey] = new V[1];
-            //Wert in Liste speichern
-            table[hkey][0] = v;
-        }
-        else{  //ja
-            //Alte Liste speichern
-            V* temp = table[hkey];
-            //Größe der Liste ermitteln
-            int oldsize = sizeof(temp)/sizeof(temp[0]);
-            //neue Liste eins größer anlegen
-            table[hkey] = new V[oldsize+1];
-            //Alte Werte in neue Liste kopieren aber Indexverschiebung um 1
-            for(int i = 0; i < oldsize; i++){
-                table[hkey][i+1] = temp[i];
+            table[hkey] = new VK(k, v, NULL);
+        } else {  //ja
+            //Pointer auf die Liste
+            VK* vk = table[hkey];
+            //Iteriere über die Liste
+            while (vk != NULL) {
+                //gibt es schon einen Eintrag mit diesem Schlüssel?
+                if (vk->key == k) {
+                    //wenn ja, dann Wert ändern
+                    vk->value = v;
+                    return true;
+                }
+                vk = vk->next;
             }
-            //Wert in Liste speichern
-            table[hkey][0] = v;
+            //wenn nein, dann neuen Eintrag anfügen
+            vk->next = new VK(k, v, NULL);
+            table[hkey] = vk->next;
         }
         return true;
     }
@@ -54,38 +62,57 @@ struct HashChain {
     // Wert zum Schlüssel k über den Referenzparameter v zurückliefern,
     // falls vorhanden; der Resultatwert ist in diesem Fall true.
     // Andernfalls bleibt v unverändert, und der Resultatwert ist false.
-    bool get (K k, V& v){
+    bool get(K k, V &v) {
         //hashwert berechnen
         uint hkey = hashval(k);
         //checken ob ein Wert an diesem hashwert existiert
-        if (table[hkey] == NULL){
-            //wenn nicht, return false
-            return false;
+        if (table[hkey] != NULL) {
+            //pointer auf erstes tupel Speichern
+            VK* vk = table[hkey];
+            //solange nicht das Ende der Liste erreicht wurde Iterieren wir durch die Liste
+            while (vk != NULL) {
+                if (vk->key == k) {
+                    //wenn key gefunden, dann value zurückgeben
+                    v = vk->value;
+                    return true;
+                }
+                vk = vk->next;
+            }
+
         }
-        else{
-            //wenn ja, dann den Wert in v speichern und true zurückgeben
-            v = table[hkey][0];
-            return true;
-        }
+        //wenn nicht, dann false zurückgeben
+        return false;
     }
 
     // Eintrag mit Schlüssel k entfernen, falls vorhanden;
     // der Resultatwert ist in diesem Fall true.
     // Andernfalls wirkungslos, und der Resultatwert ist false.
-    bool remove (K k){
+    bool remove(K k) {
         //hashwert berechnen
         uint hkey = hashval(k);
+        int c = 0;
         //checken ob ein Wert an diesem hashwert existiert
-        if (table[hkey] == NULL){
-            //wenn nicht, return false
-            return false;
+        int size = sizeof(table[hkey]) / sizeof(table[hkey][0]);
+        if (table[hkey] != NULL) {
+            //checken ob der key in der Liste existiert
+            //wenn ja, dann den Wert in v speichern und true zurückgeben
+            for (int i = 0; i < size; i++) {
+                if (table[hkey][i].key == k) {
+                    //delete table[hkey][i];
+                    VK newarr[] = new VK[size - 1];
+                    for (int j = 0; j < size; j++) {
+                        if (j != i) {
+                            newarr[c] = table[hkey][j];
+                            c++;
+                        }
+                    }
+                    table[hkey] = newarr;
+                    return true;
+                }
+            }
         }
-        else{
-            //wenn ja, dann den Wert entfernen und true zurückgeben
-            delete[] table[hkey];
-            table[hkey] = NULL;
-            return true;
-        }
+        //wenn nicht, dann false zurückgeben
+        return false;
     }
 
     // Inhalt der Tabelle zu Testzwecken ausgeben:
@@ -95,17 +122,23 @@ struct HashChain {
     // Leere Plätze werden nicht ausgegeben.
     // Bei Verwendung von dump muss es passende Ausgabeoperatoren (<<)
     // für die Typen K und V geben.
-    void dump (){
+    void dump() {
         //iterieren über die Tabelle
-        for(int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             //checken, ob ein Wert an diesem hashwert existiert
-            if (table[i] != NULL){
+            if (table[i] != NULL) {
                 //wenn ja, dann den Wert ausgeben
                 cout << i << " " << table[i][0] << endl;
             }
         }
+    };
 };
-
+//
+template<typename K, typename V>
+class VZ {
+    K key;
+    V value;
+};
 // Sondierungssequenz mit Schlüsseltyp K für lineare Sondierung.
 // An der Stelle, an der LinProb für einen bestimmten Schlüsseltyp K
 // verwendet wird, muss wiederum uint hashval (K) bekannt sein.
