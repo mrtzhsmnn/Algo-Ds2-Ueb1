@@ -207,4 +207,23 @@ struct DblHash {
 // for (int j = 0; j < n; j++) { uint i = s.next(); ...... }
 template <typename K, typename V, typename S>
 struct HashOpen {
+    // Initialisierung der Tabelle mit Tabellengröße n.
+    HashOpen (uint n);
+
+    // Einfügen eines neuen Schlüssels-Wert-Paaren.
+    // Liefert true, wenn ein neuer Eintrag hinzugefügt wurde,
+    // false, wenn der Schlüssel bereits vorhanden war.
+    bool put (K k, V v);
+
+    // Liefert den Wert des Schlüssels k oder NULL, wenn k nicht
+    // in der Tabelle enthalten ist.
+    V get (K k);
+
+    // Löschen des Schlüssels k.
+    // Liefert true, wenn der Schlüssel k gelöscht wurde,
+    // false, wenn k nicht in der Tabelle enthalten war.
+    bool del (K k);
+
+    // Ausgabe der Tabelle.
+    void dump ();
 };
