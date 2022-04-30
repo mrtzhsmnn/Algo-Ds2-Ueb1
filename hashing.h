@@ -252,9 +252,10 @@ struct HashOpen {
                 M=2;
                 return  i;
             }
-        };
         return 0;
-    };
+        };
+
+
 
 
     // Einfügen eines neuen Schlüssels-Wert-Paaren.
