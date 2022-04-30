@@ -243,7 +243,7 @@ struct HashOpen {
                 }
             }
             //Tabelle hat an Stelle i eine Löschmarkierung und es wurde noch kein Index gemerkt
-            if(table[i]==Löschmarkierung && first){
+            if(table[i]=="Löschmarkierung" && first){
                 first= false;
                 iMem= i;
             }
@@ -264,7 +264,7 @@ struct HashOpen {
 
     bool put (K k, V v) {
         int M;
-        i=help(k,&M);
+        int i=help(k,&M);
 
         if(M==0){
             table[i]=new VZ(k,v);
@@ -278,7 +278,7 @@ struct HashOpen {
     // in der Tabelle enthalten ist.
    bool get (K k, V& v) {
         int M;
-        i=help(k,&M);
+        int i=help(k,&M);
         if(M==2){
             v=table[i].value;
             return true;
@@ -291,10 +291,10 @@ struct HashOpen {
     // false, wenn k nicht in der Tabelle enthalten war.
     bool del (K k){
         int M;
-        i=help(k,&M);
+        int i=help(k,&M);
 
         if(M==2){
-            table[i]=Löschmarkierung;
+            table[i]="Löschmarkierung";
             return true;
         }
         else{return false;}
@@ -303,10 +303,10 @@ struct HashOpen {
     // Ausgabe der Tabelle.
     void dump (){
 
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < size; i++) {
 
             if(table[i]!=NULL){
-                if(table[i]==Löschmarkierung){
+                if(table[i]=="Löschmarkierung"){
                     cout<<"Löschmarkierung an Index i:"<<i<<endl;
                 }
                 else{
