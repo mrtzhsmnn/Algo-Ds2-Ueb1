@@ -204,46 +204,57 @@ struct DblHash {
 template <typename K, typename V, typename S>
 struct HashOpen {
 
+
     struct VZ{
         K key;
         V value;
-    }
+    };
+    VZ *table;
+    int size;
     // Initialisierung der Tabelle mit Tabellengröße n.
     HashOpen (uint n){
-        VZ *table[n];
+        table= new VZ *[n];
+        size = n;
     }
 
-    void help(K k, uint *M){
-        index[]=S.next(k);
-        uint iMem= NULL;
+    uint help(K k, int M){
+        uint i=0;
+        uint iMem= 0;
+        bool first = true;
+        S s = S(k, size);
         //Wenn Tabelle an der Stelle i leer ist
-        for (int i = 0; i < sizeof(index) ; i++)
+        for (int j = 0; j < size ; j++)
         {
-            if(table[index[i]]==NULL){
+            i = s.next();
+            if(table[i]==NULL){
             //Wenn noch kein Index gemerkt wurde
-                if(iMem==NULL){
-                iMem=i;
+                if(first){
+                    iMem = i;
+                    first = false;
+                }
+                iMem= i;
                 M=0;
                 return iMem;
                 }
             //Wenn bereits ein Index gemerkt wurde
                 else{
                     M=1;
-                    return "Nicht vorhanden an Index i:" i;
+                    return i ;
                 }
             }
             //Tabelle hat an Stelle i eine Löschmarkierung und es wurde noch kein Index gemerkt
-            if(table[index[i]]==Löschmarkierung && iMem==NULL){
-                iMem=i;
+            if(table[i]==Löschmarkierung && first){
+                first= false;
+                iMem= i;
             }
             //Key an der Stelle i entspricht übergebenem Key
-            if(table[index[i]].key==k){
+            if(table[i].key==k){
                 M=2;
-                return "Vorhanden an Index i:" i;
+                return  i;
             }
-        }
-        return "Tabelle ist voll";
-    }
+        };
+        return 0;
+    };
 
 
     // Einfügen eines neuen Schlüssels-Wert-Paaren.
@@ -251,7 +262,7 @@ struct HashOpen {
     // false, wenn der Schlüssel bereits vorhanden war.
 
     bool put (K k, V v) {
-        uint M;
+        int M;
         i=help(k,&M);
 
         if(M==0){
@@ -265,7 +276,7 @@ struct HashOpen {
     // Liefert den Wert des Schlüssels k oder NULL, wenn k nicht
     // in der Tabelle enthalten ist.
    bool get (K k, V& v) {
-        uint M;
+        int M;
         i=help(k,&M);
         if(M==2){
             v=table[i].value;
@@ -278,7 +289,7 @@ struct HashOpen {
     // Liefert true, wenn der Schlüssel k gelöscht wurde,
     // false, wenn k nicht in der Tabelle enthalten war.
     bool del (K k){
-        uint M;
+        int M;
         i=help(k,&M);
 
         if(M==2){
@@ -291,5 +302,18 @@ struct HashOpen {
     // Ausgabe der Tabelle.
     void dump (){
 
+        for (int i = 0; i < n; i++) {
+
+            if(table[i]!=NULL){
+                if(table[i]==Löschmarkierung){
+                    cout<<"Löschmarkierung an Index i:"<<i<<endl;
+                }
+                else{
+                    cout<<"Key:"<<table[i].key<<" Value:"<<table[i].value<<endl;
+                }
+            }
+
+        }
+
     }
-}
+};
