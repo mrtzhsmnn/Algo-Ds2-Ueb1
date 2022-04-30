@@ -145,11 +145,7 @@ struct HashChain {
     };
 };
 //
-template<typename K, typename V>
-class VZ {
-    K key;
-    V value;
-};
+
 // Sondierungssequenz mit Schlüsseltyp K für lineare Sondierung.
 // An der Stelle, an der LinProb für einen bestimmten Schlüsseltyp K
 // verwendet wird, muss wiederum uint hashval (K) bekannt sein.
@@ -207,52 +203,93 @@ struct DblHash {
 // for (int j = 0; j < n; j++) { uint i = s.next(); ...... }
 template <typename K, typename V, typename S>
 struct HashOpen {
+
+    struct VZ{
+        K key;
+        V value;
+    }
     // Initialisierung der Tabelle mit Tabellengröße n.
     HashOpen (uint n){
-        obj table[n];
-    };
+        VZ *table[n];
+    }
+
+    void help(K k, uint *M){
+        index[]=S.next(k);
+        uint iMem= NULL;
+        //Wenn Tabelle an der Stelle i leer ist
+        for (int i = 0; i < sizeof(index) ; i++)
+        {
+            if(table[index[i]]==NULL){
+            //Wenn noch kein Index gemerkt wurde
+                if(iMem==NULL){
+                iMem=i;
+                M=0;
+                return iMem;
+                }
+            //Wenn bereits ein Index gemerkt wurde
+                else{
+                    M=1;
+                    return "Nicht vorhanden an Index i:" i;
+                }
+            }
+            //Tabelle hat an Stelle i eine Löschmarkierung und es wurde noch kein Index gemerkt
+            if(table[index[i]]==Löschmarkierung && iMem==NULL){
+                iMem=i;
+            }
+            //Key an der Stelle i entspricht übergebenem Key
+            if(table[index[i]].key==k){
+                M=2;
+                return "Vorhanden an Index i:" i;
+            }
+        }
+        return "Tabelle ist voll";
+    }
+
 
     // Einfügen eines neuen Schlüssels-Wert-Paaren.
     // Liefert true, wenn ein neuer Eintrag hinzugefügt wurde,
     // false, wenn der Schlüssel bereits vorhanden war.
 
     bool put (K k, V v) {
-        if(table[sizeof(table-1)] != NULL) {
-            return false;
-        }
-        else {
-            obj temp[n];
-            for (int i = 0; i < n;i++) {
-                temp[i+1] = table[i];
-                temp[0] = new obj(k, v);
-                table=temp;
-            }
+        uint M;
+        i=help(k,&M);
+
+        if(M==0){
+            table[i]=new VZ(k,v);
             return true;
         }
+        else{return false;}
         }
 
 
     // Liefert den Wert des Schlüssels k oder NULL, wenn k nicht
     // in der Tabelle enthalten ist.
-    bool get (K k, V& v) {
-        while(table[i] != NULL) {
-            if(table[i]->key == k) {
-                v = table[i]->value;
-                return true;
-            }
-            else {
-                i++;
-            }
-            return false;
+   bool get (K k, V& v) {
+        uint M;
+        i=help(k,&M);
+        if(M==2){
+            v=table[i].value;
+            return true;
         }
-
+        else{return false;}
     }
 
     // Löschen des Schlüssels k.
     // Liefert true, wenn der Schlüssel k gelöscht wurde,
     // false, wenn k nicht in der Tabelle enthalten war.
-    bool del (K k);
+    bool del (K k){
+        uint M;
+        i=help(k,&M);
+
+        if(M==2){
+            table[i]=Löschmarkierung;
+            return true;
+        }
+        else{return false;}
+    }
 
     // Ausgabe der Tabelle.
-    void dump ();
-};
+    void dump (){
+
+    }
+}
