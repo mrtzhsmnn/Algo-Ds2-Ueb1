@@ -207,7 +207,7 @@ struct QuadProb {
             first = false;
         }
         else {
-            prev = (prev + (hashval(key)%size))%size;
+            prev = (prev + (hashval(key)%size))%size; //quadrieren, hm
         }
         return prev;
 
@@ -234,11 +234,11 @@ struct DblHash {
         // double hashing
         // prev = (hashval(key) + (hashval2(key, size))%size;
         if (first) {
-            prev = (hashval(key) + (hashval2(key, size))%size);
+            prev = (hashval(key) + (hashval2(key, size))%size); //standard formel, siehe skript
             first = false;
         }
         else {
-            prev = (prev + (hashval2(key, size))%size);
+            prev = (prev + (hashval2(key, size))%size); //noch nicht so gut
         }
         return prev;
 
