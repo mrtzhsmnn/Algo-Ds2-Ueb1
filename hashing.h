@@ -194,7 +194,7 @@ struct QuadProb {
     uint size;
     K key;
     bool first = true;
-    LinProb (K k, uint n){
+    QuadProb (K k, uint n){
         key = k;
         size = n;
     };
