@@ -190,6 +190,28 @@ struct LinProb {
 // analog zu LinProb.
 template <typename K>
 struct QuadProb {
+    uint prev;
+    uint size;
+    K key;
+    bool first = true;
+    LinProb (K k, uint n){
+        key = k;
+        size = n;
+    };
+
+
+    int next (){
+        //quadratic probing
+        if (first) {
+            prev = (hashval(key)%size);
+            first = false;
+        }
+        else {
+            prev = (prev + (hashval(key)%size))%size;
+        }
+        return prev;
+
+    };
 };
 
 // Sondierungssequenz mit Schlüsseltyp K für doppelte Streuung.
@@ -200,6 +222,27 @@ struct QuadProb {
 // Ansonsten analog zu LinProb.
 template <typename K>
 struct DblHash {
+    uint prev;
+    uint size;
+    K key;
+    bool first = true;
+    DblHash (K k, uint n){
+        key = k;
+        size = n;
+    };
+    uint next (){
+        // double hashing
+        // prev = (hashval(key) + (hashval2(key, size))%size;
+        if (first) {
+            prev = (hashval(key) + (hashval2(key, size))%size);
+            first = false;
+        }
+        else {
+            prev = (prev + (hashval2(key, size))%size);
+        }
+        return prev;
+
+    };
 };
 
 // Mit offener Adressierung implementierte Streuwerttabelle mit
