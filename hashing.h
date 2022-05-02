@@ -155,10 +155,11 @@ struct LinProb {
     uint prev;
     uint size;
     K key;
-    bool first = true;
+    bool first;
     LinProb (K k, uint n){
         key = k;
         size = n;
+        first = true;
     };
     // Den ersten bzw. nächsten Wert der Sequenz liefern.
     // Nach einem Aufruf des Konstruktors darf diese Funktion also
@@ -193,14 +194,13 @@ struct QuadProb {
     uint prev;
     uint size;
     K key;
-    bool first = true;
-    QuadProb (K k, uint n){
+    bool first;
+    QuadProb(K k, uint n){
         key = k;
         size = n;
+        first = true;
     };
-
-
-    int next (){
+    uint next (){
         //quadratic probing
         if (first) {
             prev = (hashval(key)%size);
@@ -225,10 +225,11 @@ struct DblHash {
     uint prev;
     uint size;
     K key;
-    bool first = true;
+    bool first;
     DblHash (K k, uint n){
         key = k;
         size = n;
+        first = true;
     };
     uint next (){
         // double hashing
@@ -241,7 +242,6 @@ struct DblHash {
             prev = (prev + (hashval2(key, size))%size); //noch nicht so gut
         }
         return prev;
-
     };
 };
 
