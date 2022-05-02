@@ -152,8 +152,14 @@ struct HashChain {
 template <typename K>
 struct LinProb {
     // Initialisierung der Sequenz mit Schlüssel k und Tabellengrößen.
-    LinProb (K k, uint n);
-
+    uint prev;
+    uint size;
+    K key;
+    bool first = true;
+    LinProb (K k, uint n){
+        key = k;
+        size = n;
+    };
     // Den ersten bzw. nächsten Wert der Sequenz liefern.
     // Nach einem Aufruf des Konstruktors darf diese Funktion also
     // bis zu n-mal aufgerufen werden.
@@ -168,7 +174,16 @@ struct LinProb {
     // gespeichert werden.
     // Dann kann bei realistischen Tabellengrößen n kein Überlauf
     // auftreten.
-    uint next ();
+    uint next (){
+        if (first) {
+            prev = (hashval(key)%size);
+            first = false;
+        }
+        else {
+            prev = (prev + 1)%size;
+        }
+        return prev;
+    };
 };
 
 // Sondierungssequenz mit Schlüsseltyp K für quadratische Sondierung,
