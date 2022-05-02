@@ -223,6 +223,7 @@ struct HashOpen {
     struct VZ{
         K key;
         V value;
+        VZ(K k, V v) : key(k), value(v) {}
     };
     VZ *table;
     int size;
