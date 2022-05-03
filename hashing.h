@@ -315,6 +315,7 @@ struct HashOpen {
             if(table[i].marker==marker::gelöscht && first){
                 first= false;
                 iMem= i;
+
             }
             //Key an der Stelle i entspricht übergebenem Key
             if(table[i].key==k && table[i].value!=NULL){
@@ -366,7 +367,7 @@ struct HashOpen {
         int i=help(k,&M);
 
         if(M==2){
-            table[i]=marker::gelöscht;
+            table[i].marker=marker::gelöscht;
             return true;
         }
         else{return false;}
@@ -378,7 +379,7 @@ struct HashOpen {
         for (int i = 0; i < size; i++) {
 
             if(table[i]!=NULL){
-                if(table[i]=="Löschmarkierung"){
+                if(table[i].marker==marker::gelöscht){
                     cout<<"Löschmarkierung an Index i:"<<i<<endl;
                 }
                 else{
