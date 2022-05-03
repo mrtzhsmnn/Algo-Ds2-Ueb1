@@ -278,25 +278,23 @@ struct HashOpen {
 
     uint help(K k, int M){
         uint i=0;
-        uint iMem= 0;
+        uint iMem= NULL;
         bool first = true;
         S s = S(k, size);
         //Wenn Tabelle an der Stelle i leer ist
         for (int j = 0; j < size ; j++)
         {
             i = s.next();
-            if(table[i]==NULL){
+            if(table[i]==NULL){//nicht vorhanden
             //Wenn noch kein Index gemerkt wurde
-                if(first){
+                if(first){//gemerkten Index zurückgeben
                     iMem = i;
                     first = false;
+                    M=0;
+                    return iMem;
                 }
-                iMem= i;
-                M=0;
-                return iMem;
-                }
-            //Wenn bereits ein Index gemerkt wurde
-                else{
+                //Wenn bereits ein Index gemerkt wurde
+                else{ //liefere Index zurück
                     M=1;
                     return i ;
                 }
@@ -307,11 +305,14 @@ struct HashOpen {
                 iMem= i;
             }
             //Key an der Stelle i entspricht übergebenem Key
-            if(table[i].key==k){
-                M=2;
+            if(table[i].key==k && table[i].value!=NULL){
+                M=2; //vorhanden und i
                 return  i;
             }
-        return 0;
+        }
+        if(iMem!=NULL) return i; //nicht vorhanden
+        M=3;
+        return NULL;//Tabelle voll
         };
 
 
@@ -325,7 +326,7 @@ struct HashOpen {
         int M;
         int i=help(k,&M);
 
-        if(M==0){
+        if(i!=NULL){
             table[i]=new VZ(k,v);
             return true;
         }
