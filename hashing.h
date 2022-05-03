@@ -41,7 +41,8 @@ struct HashChain {
             table[hkey] = new VK(k, v, NULL);
         } else {  //ja
             //Pointer auf die Liste
-            VK* vk = table[hkey];
+            VK *vk = table[hkey];
+            VK *mem = table[hkey];
             //Iteriere über die Liste
             while (vk != NULL) {
                 //gibt es schon einen Eintrag mit diesem Schlüssel?
@@ -53,8 +54,7 @@ struct HashChain {
                 vk = vk->next;
             }
             //wenn nein, dann neuen Eintrag anfügen
-            vk->next = new VK(k, v, NULL);
-            table[hkey] = vk->next;
+            table[hkey] = new VK(k, v, mem);
         }
         return true;
     }
@@ -134,10 +134,8 @@ struct HashChain {
             if (table[i] != NULL) {
                 //wenn ja, dann den Wert ausgeben
                 VK *vk = table[i];
-                int c = 0;
                 while (vk != NULL) {
-                    cout << c << " " << vk->key << " " << vk->value << endl;
-                    c++;
+                    cout << i << " " << vk->key << " " << vk->value << endl;
                     vk = vk->next;
                 }
             }
@@ -194,11 +192,13 @@ struct QuadProb {
     uint prev;
     uint size;
     K key;
+    int i;
     bool first;
     QuadProb(K k, uint n){
         key = k;
         size = n;
         first = true;
+        i = 0;
     };
     uint next (){
         //quadratic probing
@@ -208,10 +208,10 @@ struct QuadProb {
             first = false;
         }
         else {
-            prev = (prev + (hashval(key)%size))%size;
+            prev = (prev + i)%size;
         }
+        i++;
         return prev;
-
     };
 };
 
@@ -230,6 +230,7 @@ struct DblHash {
     bool first;
     DblHash (K k, uint n){
         key = k;
+        first = true;
         size = n;
         i = 0;
     };
@@ -241,17 +242,9 @@ struct DblHash {
             first = false;
         }
         else {
-            prev = (prev + i*(hashval2(key, size))%size);
+            prev = ((prev + i*(hashval2(key, size)))%size);
         }
-        // vllt keine while Bedingung nutzen, wenn bei Aufruf Schleife genutzt wird.
-//
-//        while (i < size) {
-//            prev = (hashval(key) + (hashval2(key, size) * i))%size;
-//            i++;
-//            if (prev != hashval(key)) {
-//                break;
-//            }
-//        }
+        i++;
         return prev;
     };
 };
@@ -289,7 +282,6 @@ struct HashOpen {
     }
 
     int help(K k, int *Mem){
-        int M = *Mem;
         uint i=0;
         int iMem= -5;
         bool first = true;
@@ -303,12 +295,12 @@ struct HashOpen {
                 if(first){//gemerkten Index zurückgeben
                     iMem = i;
                     first = false;
-                    M=0;
+                    *Mem=0;
                     return iMem;
                 }
                 //Wenn bereits ein Index gemerkt wurde
                 else{ //liefere Index zurück
-                    M=1;
+                    *Mem=1;
                     return i ;
                 }
             }
@@ -320,12 +312,12 @@ struct HashOpen {
             }
             //Key an der Stelle i entspricht übergebenem Key
             if(table[i]->key==k){
-                M=2; //vorhanden und i
+                *Mem=2; //vorhanden und i
                 return  i;
             }
         }
         if(iMem!=-5) return i; //nicht vorhanden
-        M=3;
+        *Mem=3;
         return -1;//Tabelle voll
     };
 
@@ -362,7 +354,6 @@ struct HashOpen {
     bool remove (K k){
         int M;
         int i=help(k,&M);
-
         if(M==2){
             table[i]->m=marker::gelöscht;
             return true;
@@ -377,10 +368,10 @@ struct HashOpen {
 
             if(table[i]!=NULL){
                 if(table[i]->m==marker::gelöscht){
-                    cout<<"Löschmarkierung an Index i:"<<i<<endl;
+                    cout<<i<<endl;
                 }
                 else{
-                    cout<<"Key:"<<table[i]->key<<" Value:"<<table[i]->value<<endl;
+                    cout<<i<<" "<<table[i]->key<<" "<<table[i]->value<<endl;
                 }
             }
 

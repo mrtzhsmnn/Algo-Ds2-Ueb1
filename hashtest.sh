@@ -12,3 +12,4 @@ for x in c l q d; do
 	q
 	END
 done
+sleep 5m
