@@ -202,12 +202,13 @@ struct QuadProb {
     };
     uint next (){
         //quadratic probing
+        // Formel: s[j](k) = (h(k) + (j + j^2 / 2)) mod n ... aus dem Skript
         if (first) {
             prev = (hashval(key)%size);
             first = false;
         }
         else {
-            prev = (prev + (hashval(key)%size))%size; //quadrieren, hm
+            prev = (prev + (hashval(key)%size))%size;
         }
         return prev;
 
@@ -225,22 +226,32 @@ struct DblHash {
     uint prev;
     uint size;
     K key;
+    int i;
     bool first;
     DblHash (K k, uint n){
         key = k;
         size = n;
-        first = true;
+        i = 0;
     };
     uint next (){
         // double hashing
-        // prev = (hashval(key) + (hashval2(key, size))%size;
+        // Formel: prev = (hashval(key) + i*(hashval2(key, size))%size;
         if (first) {
-            prev = (hashval(key) + (hashval2(key, size))%size); //standard formel, siehe skript
+            prev = (hashval(key)%size);
             first = false;
         }
         else {
-            prev = (prev + (hashval2(key, size))%size); //noch nicht so gut
+            prev = (prev + i*(hashval2(key, size))%size);
         }
+        // vllt keine while Bedingung nutzen, wenn bei Aufruf Schleife genutzt wird.
+//
+//        while (i < size) {
+//            prev = (hashval(key) + (hashval2(key, size) * i))%size;
+//            i++;
+//            if (prev != hashval(key)) {
+//                break;
+//            }
+//        }
         return prev;
     };
 };
