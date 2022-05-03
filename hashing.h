@@ -280,17 +280,18 @@ struct HashOpen {
         marker m;
         VZ(K k, V v,marker m) : key(k), value(v),m(marker::null) {}
     };
-    VZ *table;
+    VZ **table;
     int size;
     // Initialisierung der Tabelle mit Tabellengröße n.
     HashOpen (uint n){
-        table= new VZ *[n];
+        table= new VZ *[n]();
         size = n;
     }
 
-    uint help(K k, int M){
+    int help(K k, int *Mem){
+        int M = *Mem;
         uint i=0;
-        uint iMem= NULL;
+        int iMem= -5;
         bool first = true;
         S s = S(k, size);
         //Wenn Tabelle an der Stelle i leer ist
@@ -312,24 +313,21 @@ struct HashOpen {
                 }
             }
             //Tabelle hat an Stelle i eine Löschmarkierung und es wurde noch kein Index gemerkt
-            if(table[i].marker==marker::gelöscht && first){
+            if(table[i]->m==marker::gelöscht && first){
                 first= false;
                 iMem= i;
 
             }
             //Key an der Stelle i entspricht übergebenem Key
-            if(table[i].key==k && table[i].value!=NULL){
+            if(table[i]->key==k){
                 M=2; //vorhanden und i
                 return  i;
             }
         }
-        if(iMem!=NULL) return i; //nicht vorhanden
+        if(iMem!=-5) return i; //nicht vorhanden
         M=3;
-        return NULL;//Tabelle voll
-        };
-
-
-
+        return -1;//Tabelle voll
+    };
 
     // Einfügen eines neuen Schlüssels-Wert-Paaren.
     // Liefert true, wenn ein neuer Eintrag hinzugefügt wurde,
@@ -338,13 +336,12 @@ struct HashOpen {
     bool put (K k, V v) {
         int M;
         int i=help(k,&M);
-
-        if(i!=NULL){
-            table[i]=new VZ(k,v);
+        if(i!=-1){
+            table[i]=new VZ(k,v,marker::null);
             return true;
         }
-        else{return false;}
-        }
+        else return false;
+    }
 
 
     // Liefert den Wert des Schlüssels k oder NULL, wenn k nicht
@@ -353,7 +350,7 @@ struct HashOpen {
         int M;
         int i=help(k,&M);
         if(M==2){
-            v=table[i].value;
+            v=table[i]->value;
             return true;
         }
         else{return false;}
@@ -362,12 +359,12 @@ struct HashOpen {
     // Löschen des Schlüssels k.
     // Liefert true, wenn der Schlüssel k gelöscht wurde,
     // false, wenn k nicht in der Tabelle enthalten war.
-    bool del (K k){
+    bool remove (K k){
         int M;
         int i=help(k,&M);
 
         if(M==2){
-            table[i].marker=marker::gelöscht;
+            table[i]->m=marker::gelöscht;
             return true;
         }
         else{return false;}
@@ -379,11 +376,11 @@ struct HashOpen {
         for (int i = 0; i < size; i++) {
 
             if(table[i]!=NULL){
-                if(table[i].marker==marker::gelöscht){
+                if(table[i]->m==marker::gelöscht){
                     cout<<"Löschmarkierung an Index i:"<<i<<endl;
                 }
                 else{
-                    cout<<"Key:"<<table[i].key<<" Value:"<<table[i].value<<endl;
+                    cout<<"Key:"<<table[i]->key<<" Value:"<<table[i]->value<<endl;
                 }
             }
 
