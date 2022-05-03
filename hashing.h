@@ -244,7 +244,7 @@ struct DblHash {
         return prev;
     };
 };
-
+enum class marker{gelöscht,null};
 // Mit offener Adressierung implementierte Streuwerttabelle mit
 // Schlüsseltyp K, Werttyp V und Sondierungssequenz des Typs S.
 // Bedeutung von Konstruktor und Elementfunktionen wie bei HashChain
@@ -266,7 +266,8 @@ struct HashOpen {
     struct VZ{
         K key;
         V value;
-        VZ(K k, V v) : key(k), value(v) {}
+        marker m;
+        VZ(K k, V v,marker m) : key(k), value(v),m(marker::null) {}
     };
     VZ *table;
     int size;
@@ -300,7 +301,7 @@ struct HashOpen {
                 }
             }
             //Tabelle hat an Stelle i eine Löschmarkierung und es wurde noch kein Index gemerkt
-            if(table[i]=="Löschmarkierung" && first){
+            if(table[i].marker==marker::gelöscht && first){
                 first= false;
                 iMem= i;
             }
@@ -354,7 +355,7 @@ struct HashOpen {
         int i=help(k,&M);
 
         if(M==2){
-            table[i]="Löschmarkierung";
+            table[i]=marker::gelöscht;
             return true;
         }
         else{return false;}
