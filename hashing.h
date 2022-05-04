@@ -30,7 +30,7 @@ struct HashChain {
     // Liste) hinzufügen (wenn es noch keinen solchen Eintrag gibt)
     // bzw. ersetzen (wenn es bereits einen gibt).
     // Der Resultatwert ist immer true.
-    bool put(K k, V v) { ///TODO: TESTING
+    bool put(K k, V v) {
         //hashwert berechnen
         uint hkey = hashval(k);
         //gibt es schon eine Liste an diesem hashwert?

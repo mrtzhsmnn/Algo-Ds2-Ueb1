@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 using namespace std;
-
 #include "hashing.h"
 
 // Punkt im zweidimensionalen Raum.
