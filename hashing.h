@@ -293,7 +293,7 @@ struct HashOpen {
                 first= false;
                 iMem= i;
             }
-            //Key an der Stelle i entspricht übergebenem Key
+            //Key an der Stelle i entspricht übergebenem Key.
             if(table[i]->key==k){
                 *Mem=2; //vorhanden und i
                 return  i;
