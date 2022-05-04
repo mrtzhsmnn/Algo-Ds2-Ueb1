@@ -285,11 +285,11 @@ struct HashOpen {
                 //Wenn bereits ein Index gemerkt wurde
                 else{ //liefere Index zurück
                     *Mem=1;
-                    return i ;
+                    return iMem;
                 }
             }
             //Tabelle hat an Stelle i eine Löschmarkierung und es wurde noch kein Index gemerkt
-            if(table[i]->m==marker::geloescht && first){
+            if(table[i]->m==marker::geloescht){ ///&&first entfernt.
                 first= false;
                 iMem= i;
             }
