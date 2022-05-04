@@ -7,18 +7,21 @@ using uint = unsigned int;
 // verwendet wird, muss eine Funktion uint hashval (K) zur Berechnung
 // von Streuwerten sowie ein passender Gleichheitsoperator (==) für den
 // Typ K bekannt sein.
-template <typename K, typename V>
+template<typename K, typename V>
 struct HashChain {
     //Hilfsstruktur für die Datenspeicherung und Verkettung
     struct VK {
         K key;
         V value;
-        VK* next;
-        VK(K k, V v,VK* n) : key(k), value(v), next(n) {}
+        VK *next;
+
+        VK(K k, V v, VK *n) : key(k), value(v), next(n) {}
     };
+
     uint size;
-    //hier pointer, da der Werttyp V unbekannt ist.
+    //hier Pointer, da der Werttyp V unbekannt ist.
     VK **table;
+
     // Initialisierung mit Größe n.
     HashChain(uint n) {
         // Größe der Tabelle n.
@@ -26,10 +29,11 @@ struct HashChain {
         // Tabelle mit n (= size) Pointern.
         table = new VK *[size]();
     }
+
     // Eintrag mit Schlüssel k und Wert v (am Anfang der jeweiligen
     // Liste) hinzufügen (wenn es noch keinen solchen Eintrag gibt)
     // bzw. ersetzen (wenn es bereits einen gibt).
-    // Der Resultatwert ist immer true.
+    // Das Resultat ist immer true.
     bool put(K k, V v) {
         //hashwert berechnen
         uint hkey = hashval(k);
@@ -45,60 +49,62 @@ struct HashChain {
             while (vk != NULL) {
                 //gibt es schon einen Eintrag mit diesem Schlüssel?
                 if (vk->key == k) {
-                    //wenn ja, dann Wert ändern
+                    //falls ja, dann Wert ändern
                     vk->value = v;
                     return true;
                 }
                 vk = vk->next;
             }
-            //wenn nein, dann neuen Eintrag anfügen
+            //falls nein, dann neuen Eintrag anfügen
             table[hkey] = new VK(k, v, mem);
         }
         return true;
     }
+
     // Wert zum Schlüssel k über den Referenzparameter v zurückliefern,
-    // falls vorhanden; der Resultatwert ist in diesem Fall true.
-    // Andernfalls bleibt v unverändert, und der Resultatwert ist false.
+    // falls vorhanden; das Resultat ist in diesem Fall true.
+    // Andernfalls bleibt v unverändert, und das Resultat ist false.
     bool get(K k, V &v) {
         //hashwert berechnen
         uint hkey = hashval(k);
-        //checken ob ein Wert an diesem hashwert existiert
+        //checken, ob ein Wert an diesem hashwert existiert
         if (table[hkey] != NULL) {
             //pointer auf erstes tupel Speichern
-            VK* vk = table[hkey];
+            VK *vk = table[hkey];
             //solange nicht das Ende der Liste erreicht wurde Iterieren wir durch die Liste
             while (vk != NULL) {
                 if (vk->key == k) {
-                    //wenn key gefunden, dann value zurückgeben
+                    //falls key gefunden, dann value zurückgeben
                     v = vk->value;
                     return true;
                 }
                 vk = vk->next;
             }
         }
-        //wenn nicht, dann false zurückgeben
+        // falls nicht, dann false zurückgeben
         return false;
     }
+
     // Eintrag mit Schlüssel k entfernen, falls vorhanden;
-    // der Resultatwert ist in diesem Fall true.
-    // Andernfalls wirkungslos, und der Resultatwert ist false.
+    // das Resultat ist in diesem Fall true.
+    // Andernfalls wirkungslos, und das Resultat ist false.
     bool remove(K k) {
         //hashwert berechnen
         uint hkey = hashval(k);
-        //checken ob ein Wert an diesem hashwert existiert
+        //checken, ob ein Wert an diesem hashwert existiert
         if (table[hkey] != NULL) {
             //pointer auf erstes tupel Speichern
-            VK* vk = table[hkey];
+            VK *vk = table[hkey];
             //solange nicht das Ende der Liste erreicht wurde Iterieren wir durch die Liste
             while (vk != NULL) {
-                //wenn key gefunden, dann tupel löschen
+                //falls key gefunden, dann tupel löschen
                 if (vk->key == k) {
-                    //wenn erster Eintrag, dann nur den Pointer auf den nächsten Eintrag übernehmen
+                    //falls erster Eintrag, dann nur den Pointer auf den nächsten Eintrag übernehmen
                     if (vk == table[hkey]) {
                         table[hkey] = vk->next;
                     } else {
                         //sonst den Pointer auf den nächsten Eintrag übernehmen
-                        VK* vk2 = table[hkey];
+                        VK *vk2 = table[hkey];
                         while (vk2->next != vk) {
                             vk2 = vk2->next;
                         }
@@ -111,9 +117,10 @@ struct HashChain {
                 vk = vk->next;
             }
         }
-        //wenn nicht, dann false zurückgeben
+        // falls nicht, dann false zurückgeben
         return false;
     }
+
     // Inhalt der Tabelle zu Testzwecken ausgeben:
     // Pro Eintrag eine Zeile bestehend aus der Nummer des Platzes,
     // Schlüssel und Wert, jeweils getrennt durch genau ein Leerzeichen.
@@ -122,11 +129,11 @@ struct HashChain {
     // Bei Verwendung von dump muss es passende Ausgabeoperatoren (<<)
     // für die Typen K und V geben.
     void dump() {
-        //iterieren über die Tabelle
+        // iterieren über die Tabelle
         for (int i = 0; i < size; i++) {
-            //checken, ob ein Wert an diesem hashwert existiert
+            // checken, ob ein Wert an diesem hashwert existiert
             if (table[i] != NULL) {
-                //wenn ja, dann den Wert ausgeben
+                // falls ja, dann den Wert ausgeben
                 VK *vk = table[i];
                 while (vk != NULL) {
                     cout << i << " " << vk->key << " " << vk->value << endl;
@@ -136,28 +143,31 @@ struct HashChain {
         }
     };
 };
+
 // Sondierungssequenz mit Schlüsseltyp K für lineare Sondierung.
 // An der Stelle, an der LinProb für einen bestimmten Schlüsseltyp K
 // verwendet wird, muss wiederum uint hashval (K) bekannt sein.
-template <typename K>
+template<typename K>
 struct LinProb {
     // Initialisierung der Sequenz mit Schlüssel k und Tabellengrößen.
     uint prev;
     uint size;
     K key;
     bool first;
-    LinProb (K k, uint n){
+
+    LinProb(K k, uint n) {
         key = k;
         size = n;
         first = true;
     };
+
     // Den ersten bzw. nächsten Wert der Sequenz liefern.
     // Nach einem Aufruf des Konstruktors darf diese Funktion also
     // bis zu n-mal aufgerufen werden.
     // Achtung: Die direkte Verwendung der Formel
     // s[j](k) = (h(k) + j) mod n
     // kann durch arithmetischen Überlauf zu falschen Ergebnissen
-    // führen, wenn h(k) sehr groÃŸ ist.
+    // führen, wenn h(k) sehr groß ist.
     // Deshalb sollte nur der erste Wert s[0](k) = h(k) mod n direkt
     // und alle weiteren Werte jeweils aus dem vorigen Wert berechnet
     // werden: s[j](k) = (s[j-1](k) + 1) mod n für j = 1, ..., n-1.
@@ -165,39 +175,39 @@ struct LinProb {
     // gespeichert werden.
     // Dann kann bei realistischen Tabellengrößen n kein Überlauf
     // auftreten.
-    uint next (){
+    uint next() {
         if (first) {
-            prev = (hashval(key)%size);
+            prev = (hashval(key) % size);
             first = false;
-        }
-        else prev = (prev + 1)%size;
+        } else prev = (prev + 1) % size;
         return prev;
     };
 };
 
 // Sondierungssequenz mit Schlüsseltyp K für quadratische Sondierung,
 // analog zu LinProb.
-template <typename K>
+template<typename K>
 struct QuadProb {
     uint prev;
     uint size;
     K key;
     int i;
     bool first;
-    QuadProb(K k, uint n){
+
+    QuadProb(K k, uint n) {
         key = k;
         size = n;
         first = true;
         i = 0;
     };
-    uint next (){
-        //quadratic probing
-        // Formel: s[j](k) = (h(k) + (j + j^2 / 2)) mod n ... aus dem Skript
+
+    uint next() {
+        // quadratic probing
+        // Formel: s[j](k) = (h(k) + (j + j^2 / 2)) mod n , aus dem Skript
         if (first) {
-            prev = (hashval(key)%size);
+            prev = (hashval(key) % size);
             first = false;
-        }
-        else prev = (prev + i)%size;
+        } else prev = (prev + i) % size;
         i++;
         return prev;
     };
@@ -209,33 +219,38 @@ struct QuadProb {
 // Streuwertfunktion uint hashval2 (K, uint n) bekannt sein, die nur
 // Werte von 1 bis n - 1 liefert, die teilerfremd zu n sind.
 // Ansonsten analog zu LinProb.
-template <typename K>
+template<typename K>
 struct DblHash {
     uint prev;
     uint size;
     K key;
     int i;
     bool first;
-    DblHash (K k, uint n){
+
+    DblHash(K k, uint n) {
         key = k;
         first = true;
         size = n;
         i = 0;
     };
-    uint next (){
+
+    uint next() {
         // double hashing
-        // Formel: prev = (hashval(key) + i*(hashval2(key, size))%size;
+        // Formel: prev = ((prev + i * (hashval2(key, size))) % size);
         if (first) {
-            prev = (hashval(key)%size);
+            prev = (hashval(key) % size);
             first = false;
-        }
-        else prev = ((prev + i*(hashval2(key, size)))%size);
+        } else prev = ((prev + i * (hashval2(key, size))) % size);
         i++;
         return prev;
     };
 };
+
 //Enumeration für Löschmarkierung
-enum class marker{geloescht,null};
+enum class marker {
+    geloescht, null
+};
+
 // Mit offener Adressierung implementierte Streuwerttabelle mit
 // Schlüsseltyp K, Werttyp V und Sondierungssequenz des Typs S.
 // Bedeutung von Konstruktor und Elementfunktionen wie bei HashChain
@@ -250,90 +265,99 @@ enum class marker{geloescht,null};
 // wenn k den Typ K und n den Typ uint besitzt:
 // S s = S(k, n);
 // for (int j = 0; j < n; j++) { uint i = s.next(); ...... }
-template <typename K, typename V, typename S>
+template<typename K, typename V, typename S>
 struct HashOpen {
-    struct VZ{
+    struct VZ {
         K key;
         V value;
         marker m;
-        VZ(K k, V v,marker m) : key(k), value(v),m(marker::null) {}
+
+        VZ(K k, V v, marker m) : key(k), value(v), m(marker::null) {}
     };
+
     VZ **table;
     int size;
-    // Initialisierung der Tabelle mit Tabellengröße n.
-    HashOpen (uint n){
-        table= new VZ *[n]();
+
+    //Initialisierung der Tabelle mit Tabellengröße n.
+    HashOpen(uint n) {
+        table = new VZ *[n]();
         size = n;
     }
-    int help(K k, int *Mem){
-        uint i=0;
-        int iMem= -5;
+
+    int help(K k, int *Mem) {
+        uint i = 0;
+        int iMem = -5;
         bool first = true;
         S s = S(k, size);
-        //Wenn Tabelle an der Stelle i leer ist
-        for (int j = 0; j < size ; j++)
-        {
+        //Falls Tabelle an der Stelle i leer ist
+        for (int j = 0; j < size; j++) {
             i = s.next();
-            if(table[i]==NULL){//nicht vorhanden
-                if(first){//Wenn noch kein Index gemerkt wurde Index merken und zurückgeben
+            //Tabelle nicht vorhanden?
+            if (table[i] == NULL) {
+                //Falls noch kein Index gemerkt wurde,
+                //gemerkten Index zurückgeben.
+                if (first) {
                     iMem = i;
                     first = false;
-                    *Mem=0;
+                    *Mem = 0;
                     return iMem;
                 }
-                //Wenn bereits ein Index gemerkt wurde
-                else{ //liefere gemerkten Index zurück
-                    *Mem=1;
+                //Falls bereits ein Index gemerkt wurde,
+                //liefere Index zurück.
+                else {
+                    *Mem = 1;
                     return iMem;
                 }
             }
             //Tabelle hat an Stelle i eine Löschmarkierung und es wurde noch kein Index gemerkt
-            if(table[i]->m==marker::geloescht){ ///&&first entfernt.
-                first= false;
-                iMem= i;
+            if (table[i]->m == marker::geloescht) {
+                first = false;
+                iMem = i;
             }
-            //Key an der Stelle i entspricht übergebenem Key.
-            if(table[i]->key==k){
-                *Mem=2; //vorhanden und i
-                return  i;
+            //Key an der Stelle i entspricht übergebenem Key?
+            if (table[i]->key == k) {
+                *Mem = 2;
+                return i;
             }
         }
-        if(iMem!=-5) return i; //nicht vorhanden
-        *Mem=3;
-        return -1;//Tabelle voll
+        //Ist die Tabelle voll?
+        if (iMem != -5) return i;
+        *Mem = 3;
+        return -1;
     }
-    bool put (K k, V v) {
+
+    bool put(K k, V v) {
         int M;
-        int i=help(k,&M);
-        if(i!=-1){ //i ist !=-1 wenn die Tabelle nicht voll ist
-            table[i]=new VZ(k,v,marker::null); //Objekt an Stelle i wird erstellt
+        int i = help(k, &M);
+        if (i != -1) {
+            table[i] = new VZ(k, v, marker::null);
             return true;
-        }
-        else return false;
+        } else return false;
     }
-    bool get (K k, V& v) {
+
+    bool get(K k, V &v) {
         int M;
-        int i=help(k,&M);
-        if(M==2){ //M ist 2 wenn der gesuchte Key gefunden wurde
-            v=table[i]->value; //Wert zuweisen
+        int i = help(k, &M);
+        if (M == 2) {
+            v = table[i]->value;
             return true;
-        }
-        else return false;
+        } else return false;
     }
-    bool remove (K k){
+
+    bool remove(K k) {
         int M;
-        int i=help(k,&M);
-        if(M==2){ // M ist 2 wenn der gesuchte Key gefunden wurde
-            table[i]->m=marker::geloescht; //Löschmarkierung setzen
+        int i = help(k, &M);
+        if (M == 2) {
+            table[i]->m = marker::geloescht;
             return true;
-        }
-        else return false;
+        } else return false;
     }
-    void dump (){
+
+    void dump() {
         for (int i = 0; i < size; i++) {
-            if(table[i]!=NULL){ //wenn die tabelle an Stelle i nicht leer ist
-                if(table[i]->m==marker::geloescht) cout<<i<<endl; //wenn die tabelle an der Stelle i eine Löschmarkierung enthält nur Index ausgeben
-                else cout<<i<<" "<<table[i]->key<<" "<<table[i]->value<<endl; //wenn die tabelle an der Stelle i ein Element enthält Index und Key und Value ausgeben
+            if (table[i] != NULL) {
+                if (table[i]->m == marker::geloescht) cout << i << endl;
+                else cout << i << " " << table[i]->key << " " << table[i]->value << endl;
             }
         }
     }
