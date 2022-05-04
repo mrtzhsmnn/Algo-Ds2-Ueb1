@@ -33,7 +33,7 @@ struct HashChain {
     // Eintrag mit Schlüssel k und Wert v (am Anfang der jeweiligen
     // Liste) hinzufügen (wenn es noch keinen solchen Eintrag gibt)
     // bzw. ersetzen (wenn es bereits einen gibt).
-    // Der Resultatwert ist immer true.
+    // Das Resultat ist immer true.
     bool put(K k, V v) {
         //hashwert berechnen
         uint hkey = hashval(k);
@@ -202,7 +202,7 @@ struct QuadProb {
     };
 
     uint next() {
-        //quadratic probing
+        // quadratic probing
         // Formel: s[j](k) = (h(k) + (j + j^2 / 2)) mod n , aus dem Skript
         if (first) {
             prev = (hashval(key) % size);
