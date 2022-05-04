@@ -275,15 +275,14 @@ struct HashOpen {
         {
             i = s.next();
             if(table[i]==NULL){//nicht vorhanden
-            //Wenn noch kein Index gemerkt wurde
-                if(first){//gemerkten Index zurückgeben
+                if(first){//Wenn noch kein Index gemerkt wurde Index merken und zurückgeben
                     iMem = i;
                     first = false;
                     *Mem=0;
                     return iMem;
                 }
                 //Wenn bereits ein Index gemerkt wurde
-                else{ //liefere Index zurück
+                else{ //liefere gemerkten Index zurück
                     *Mem=1;
                     return iMem;
                 }
@@ -306,8 +305,8 @@ struct HashOpen {
     bool put (K k, V v) {
         int M;
         int i=help(k,&M);
-        if(i!=-1){
-            table[i]=new VZ(k,v,marker::null);
+        if(i!=-1){ //i ist !=-1 wenn die Tabelle nicht voll ist
+            table[i]=new VZ(k,v,marker::null); //Objekt an Stelle i wird erstellt
             return true;
         }
         else return false;
@@ -315,8 +314,8 @@ struct HashOpen {
     bool get (K k, V& v) {
         int M;
         int i=help(k,&M);
-        if(M==2){
-            v=table[i]->value;
+        if(M==2){ //M ist 2 wenn der gesuchte Key gefunden wurde
+            v=table[i]->value; //Wert zuweisen
             return true;
         }
         else return false;
@@ -324,17 +323,17 @@ struct HashOpen {
     bool remove (K k){
         int M;
         int i=help(k,&M);
-        if(M==2){
-            table[i]->m=marker::geloescht;
+        if(M==2){ // M ist 2 wenn der gesuchte Key gefunden wurde
+            table[i]->m=marker::geloescht; //Löschmarkierung setzen
             return true;
         }
         else return false;
     }
     void dump (){
         for (int i = 0; i < size; i++) {
-            if(table[i]!=NULL){
-                if(table[i]->m==marker::geloescht) cout<<i<<endl;
-                else cout<<i<<" "<<table[i]->key<<" "<<table[i]->value<<endl;
+            if(table[i]!=NULL){ //wenn die tabelle an Stelle i nicht leer ist
+                if(table[i]->m==marker::geloescht) cout<<i<<endl; //wenn die tabelle an der Stelle i eine Löschmarkierung enthält nur Index ausgeben
+                else cout<<i<<" "<<table[i]->key<<" "<<table[i]->value<<endl; //wenn die tabelle an der Stelle i ein Element enthält Index und Key und Value ausgeben
             }
         }
     }
