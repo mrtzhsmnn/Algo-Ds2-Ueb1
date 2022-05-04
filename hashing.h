@@ -129,11 +129,11 @@ struct HashChain {
     // Bei Verwendung von dump muss es passende Ausgabeoperatoren (<<)
     // für die Typen K und V geben.
     void dump() {
-        //iterieren über die Tabelle
+        // iterieren über die Tabelle
         for (int i = 0; i < size; i++) {
-            //checken, ob ein Wert an diesem hashwert existiert
+            // checken, ob ein Wert an diesem hashwert existiert
             if (table[i] != NULL) {
-                //falls ja, dann den Wert ausgeben
+                // falls ja, dann den Wert ausgeben
                 VK *vk = table[i];
                 while (vk != NULL) {
                     cout << i << " " << vk->key << " " << vk->value << endl;
