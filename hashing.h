@@ -117,7 +117,7 @@ struct HashChain {
                 vk = vk->next;
             }
         }
-        //falls nicht, dann false zurückgeben
+        // falls nicht, dann false zurückgeben
         return false;
     }
 
