@@ -14,7 +14,6 @@ struct HashChain {
         K key;
         V value;
         VK *next;
-
         VK(K k, V v, VK *n) : key(k), value(v), next(n) {}
     };
 
@@ -271,7 +270,6 @@ struct HashOpen {
         K key;
         V value;
         marker m;
-
         VZ(K k, V v, marker m) : key(k), value(v), m(marker::null) {}
     };
 
@@ -284,7 +282,7 @@ struct HashOpen {
         size = n;
     }
 
-    int help(K k, int *Mem) {
+    int help(K k, bool *Mem) {
         uint i = 0;
         int iMem = -5;
         bool first = true;
@@ -292,65 +290,61 @@ struct HashOpen {
         //Falls Tabelle an der Stelle i leer ist
         for (int j = 0; j < size; j++) {
             i = s.next();
-            //Tabelle nicht vorhanden?
+            //Tabelle an der Stelle I leer
             if (table[i] == NULL) {
-                //Falls noch kein Index gemerkt wurde,
-                //gemerkten Index zurückgeben.
-                if (first) {
-                    iMem = i;
+                //Falls noch kein Index gemerkt wurde -> Rückgabe des Index
+                if (first) return i;
+                    //Falls Index gemerkt wurde -> Rückgabe des gemerkten Index
+                else return iMem;
+            }
+                //Tabelle an der Stelle I nicht leer:
+            else {
+                //Löschmarkierung?
+                if ((table[i]->m == marker::geloescht)&&first){
                     first = false;
-                    *Mem = 0;
-                    return iMem;
+                    iMem = i;
                 }
-                //Falls bereits ein Index gemerkt wurde,
-                //liefere Index zurück.
-                else {
-                    *Mem = 1;
-                    return iMem;
+                //Key vorhanden?
+                if (table[i]->key == k) {
+                    *Mem = true;
+                    return i;
                 }
-            }
-            //Tabelle hat an Stelle i eine Löschmarkierung und es wurde noch kein Index gemerkt
-            if (table[i]->m == marker::geloescht) {
-                first = false;
-                iMem = i;
-            }
-            //Key an der Stelle i entspricht übergebenem Key?
-            if (table[i]->key == k) {
-                *Mem = 2;
-                return i;
             }
         }
-        //Ist die Tabelle voll?
-        if (iMem != -5) return i;
-        *Mem = 3;
-        return -1;
+        //Wurde ein index gemerkt?
+        if (iMem != -5) return iMem;
+            //Kein Index gemerkt
+        else return -1;
     }
 
     bool put(K k, V v) {
-        int M;
+        bool M;
         int i = help(k, &M);
         if (i != -1) {
             table[i] = new VZ(k, v, marker::null);
             return true;
-        } else return false;
+        }
+        else return false;
     }
 
     bool get(K k, V &v) {
-        int M;
+        bool M = false;
         int i = help(k, &M);
-        if (M == 2) {
+        if (M) {
             v = table[i]->value;
             return true;
-        } else return false;
+        }
+        else return false;
     }
 
     bool remove(K k) {
-        int M;
+        bool M = false;
         int i = help(k, &M);
-        if (M == 2) {
+        if (M) {
             table[i]->m = marker::geloescht;
             return true;
-        } else return false;
+        }
+        else return false;
     }
 
     void dump() {
