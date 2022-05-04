@@ -19,7 +19,7 @@ struct HashChain {
     };
 
     uint size;
-    //hier pointer, da der Werttyp V unbekannt ist.
+    //hier Pointer, da der Werttyp V unbekannt ist.
     VK **table;
 
     // Initialisierung mit Größe n.
@@ -34,7 +34,7 @@ struct HashChain {
     // Liste) hinzufügen (wenn es noch keinen solchen Eintrag gibt)
     // bzw. ersetzen (wenn es bereits einen gibt).
     // Der Resultatwert ist immer true.
-    bool put(K k, V v) { ///TODO: TESTING
+    bool put(K k, V v) {
         //hashwert berechnen
         uint hkey = hashval(k);
         //gibt es schon eine Liste an diesem hashwert?
@@ -49,57 +49,57 @@ struct HashChain {
             while (vk != NULL) {
                 //gibt es schon einen Eintrag mit diesem Schlüssel?
                 if (vk->key == k) {
-                    //wenn ja, dann Wert ändern
+                    //falls ja, dann Wert ändern
                     vk->value = v;
                     return true;
                 }
                 vk = vk->next;
             }
-            //wenn nein, dann neuen Eintrag anfügen
+            //falls nein, dann neuen Eintrag anfügen
             table[hkey] = new VK(k, v, mem);
         }
         return true;
     }
 
     // Wert zum Schlüssel k über den Referenzparameter v zurückliefern,
-    // falls vorhanden; der Resultatwert ist in diesem Fall true.
-    // Andernfalls bleibt v unverändert, und der Resultatwert ist false.
+    // falls vorhanden; das Resultat ist in diesem Fall true.
+    // Andernfalls bleibt v unverändert, und das Resultat ist false.
     bool get(K k, V &v) {
         //hashwert berechnen
         uint hkey = hashval(k);
-        //checken ob ein Wert an diesem hashwert existiert
+        //checken, ob ein Wert an diesem hashwert existiert
         if (table[hkey] != NULL) {
             //pointer auf erstes tupel Speichern
             VK *vk = table[hkey];
             //solange nicht das Ende der Liste erreicht wurde Iterieren wir durch die Liste
             while (vk != NULL) {
                 if (vk->key == k) {
-                    //wenn key gefunden, dann value zurückgeben
+                    //falls key gefunden, dann value zurückgeben
                     v = vk->value;
                     return true;
                 }
                 vk = vk->next;
             }
         }
-        //wenn nicht, dann false zurückgeben
+        //falls nicht, dann false zurückgeben
         return false;
     }
 
     // Eintrag mit Schlüssel k entfernen, falls vorhanden;
-    // der Resultatwert ist in diesem Fall true.
-    // Andernfalls wirkungslos, und der Resultatwert ist false.
+    // das Resultat ist in diesem Fall true.
+    // Andernfalls wirkungslos, und das Resultat ist false.
     bool remove(K k) {
         //hashwert berechnen
         uint hkey = hashval(k);
-        //checken ob ein Wert an diesem hashwert existiert
+        //checken, ob ein Wert an diesem hashwert existiert
         if (table[hkey] != NULL) {
             //pointer auf erstes tupel Speichern
             VK *vk = table[hkey];
             //solange nicht das Ende der Liste erreicht wurde Iterieren wir durch die Liste
             while (vk != NULL) {
-                //wenn key gefunden, dann tupel löschen
+                //falls key gefunden, dann tupel löschen
                 if (vk->key == k) {
-                    //wenn erster Eintrag, dann nur den Pointer auf den nächsten Eintrag übernehmen
+                    //falls erster Eintrag, dann nur den Pointer auf den nächsten Eintrag übernehmen
                     if (vk == table[hkey]) {
                         table[hkey] = vk->next;
                     } else {
@@ -117,7 +117,7 @@ struct HashChain {
                 vk = vk->next;
             }
         }
-        //wenn nicht, dann false zurückgeben
+        //falls nicht, dann false zurückgeben
         return false;
     }
 
@@ -133,7 +133,7 @@ struct HashChain {
         for (int i = 0; i < size; i++) {
             //checken, ob ein Wert an diesem hashwert existiert
             if (table[i] != NULL) {
-                //wenn ja, dann den Wert ausgeben
+                //falls ja, dann den Wert ausgeben
                 VK *vk = table[i];
                 while (vk != NULL) {
                     cout << i << " " << vk->key << " " << vk->value << endl;
@@ -167,7 +167,7 @@ struct LinProb {
     // Achtung: Die direkte Verwendung der Formel
     // s[j](k) = (h(k) + j) mod n
     // kann durch arithmetischen Überlauf zu falschen Ergebnissen
-    // führen, wenn h(k) sehr groÃŸ ist.
+    // führen, wenn h(k) sehr groß ist.
     // Deshalb sollte nur der erste Wert s[0](k) = h(k) mod n direkt
     // und alle weiteren Werte jeweils aus dem vorigen Wert berechnet
     // werden: s[j](k) = (s[j-1](k) + 1) mod n für j = 1, ..., n-1.
@@ -236,7 +236,7 @@ struct DblHash {
 
     uint next() {
         // double hashing
-        // Formel: prev = (hashval(key) + i*(hashval2(key, size))%size;
+        // Formel: prev = ((prev + i * (hashval2(key, size))) % size);
         if (first) {
             prev = (hashval(key) % size);
             first = false;
@@ -278,7 +278,7 @@ struct HashOpen {
     VZ **table;
     int size;
 
-    // Initialisierung der Tabelle mit Tabellengröße n.
+    //Initialisierung der Tabelle mit Tabellengröße n.
     HashOpen(uint n) {
         table = new VZ *[n]();
         size = n;
@@ -289,37 +289,41 @@ struct HashOpen {
         int iMem = -5;
         bool first = true;
         S s = S(k, size);
-        //Wenn Tabelle an der Stelle i leer ist
+        //Falls Tabelle an der Stelle i leer ist
         for (int j = 0; j < size; j++) {
             i = s.next();
-            if (table[i] == NULL) {//nicht vorhanden
-                //Wenn noch kein Index gemerkt wurde
-                if (first) {//gemerkten Index zurückgeben
+            //Tabelle nicht vorhanden?
+            if (table[i] == NULL) {
+                //Falls noch kein Index gemerkt wurde,
+                //gemerkten Index zurückgeben.
+                if (first) {
                     iMem = i;
                     first = false;
                     *Mem = 0;
                     return iMem;
                 }
-                    //Wenn bereits ein Index gemerkt wurde
-                else { //liefere Index zurück
+                //Falls bereits ein Index gemerkt wurde,
+                //liefere Index zurück.
+                else {
                     *Mem = 1;
                     return iMem;
                 }
             }
             //Tabelle hat an Stelle i eine Löschmarkierung und es wurde noch kein Index gemerkt
-            if (table[i]->m == marker::geloescht) { ///&&first entfernt.
+            if (table[i]->m == marker::geloescht) {
                 first = false;
                 iMem = i;
             }
-            //Key an der Stelle i entspricht übergebenem Key.
+            //Key an der Stelle i entspricht übergebenem Key?
             if (table[i]->key == k) {
-                *Mem = 2; //vorhanden und i
+                *Mem = 2;
                 return i;
             }
         }
-        if (iMem != -5) return i; //nicht vorhanden
+        //Ist die Tabelle voll?
+        if (iMem != -5) return i;
         *Mem = 3;
-        return -1;//Tabelle voll
+        return -1;
     }
 
     bool put(K k, V v) {
